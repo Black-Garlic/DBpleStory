@@ -40,6 +40,55 @@ public class main {
 		}
 	}
 	
+	public void user() {
+		String choice;
+		
+		
+	}
+	
+	public void selectChannel() {
+		int num;
+		
+		//채널들을 보여줌
+		
+		System.out.print("Select Channnel : ");
+		num = s.nextInt();
+		
+		characterMenu();
+	}
+	
+	public void characterMenu() {
+		int num;
+		
+		System.out.println("1. Character Select");
+		System.out.println("2. Channel Select");
+//		System.out.println("3. Quit");
+		
+		num = s.nextInt();
+		
+		switch(num) {
+		case 1:
+			selectCharacter();
+			break;
+		case 2:
+			selectChannel();
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void selectCharacter() {
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void login(ArrayList<User> user) {
 		String id;
 		String pw;
