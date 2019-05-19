@@ -1,15 +1,18 @@
 package proj.db;
 
 import java.sql.*;
+import java.util.Scanner;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+
 public class DBpleStoryDriver {
    public static AccessDB useDB;
 //   public static User user;
    public static Connection conn;
    static Scanner s = new Scanner(System.in);
+   static int num;
+   static String id;
    
    public static void main(String[] args) throws SQLException
    {
@@ -17,6 +20,7 @@ public class DBpleStoryDriver {
       conn = useDB.connectDB();
 //      user = new User();
       boolean isAdmin = false; //사용자인지 아닌지 구분하는 flag
+     
       
       System.out.println("***Welcome to DBpleStory***");
       
@@ -35,7 +39,7 @@ public class DBpleStoryDriver {
             while(true) {
                System.out.print("Enter your id.\n>");
                Scanner s1 = new Scanner(System.in);
-               String id = s1.nextLine();
+               id = s1.nextLine();
                System.out.print("Enter your password.\n>");
                String pwd = s1.nextLine();
                if(useDB.singIn(id, pwd)) {
@@ -59,7 +63,7 @@ public class DBpleStoryDriver {
             while(true) {
                System.out.print("Enter your id.\n>");
                Scanner s2 = new Scanner(System.in);
-               String id = s2.nextLine();
+               id = s2.nextLine();
                //id 중복여부확인
                if(useDB.checkIDDup(id)) {
                   System.out.println("...Valid ID...");
@@ -171,7 +175,8 @@ public class DBpleStoryDriver {
    }
    
    public static void selectChannel() throws SQLException {
-      int num;
+     
+      
       String channel = useDB.showChannels();
       
       System.out.println("Channels\tpresent_user");
@@ -184,17 +189,32 @@ public class DBpleStoryDriver {
    }
    
    public static void channelCharacter(int channel) throws SQLException {
-      int num;
+      int num1;
+      int select = 0;
       
       System.out.println("1. Character Select");
       System.out.println("2. Channel Select");
 //      System.out.println("3. Quit");
       
-      num = s.nextInt();
+      num1 = s.nextInt();
       
-      switch(num) {
+      switch(num1) {
       case 1:
-         selectCharacter(channel);
+    	 while(true)
+    	 {
+    	 System.out.println("1. Select");
+    	 System.out.println("2. make");
+    	 select = s.nextInt();
+    	 if(select==1)
+    	 {
+    		 selectCharacter(channel);
+    		 break;
+    	 }
+    	 else if(select==2)
+    	 {
+    		 useDB.makecharacter(id, channel);
+    	 }
+    	 }
          break;
       case 2:
          selectChannel();
@@ -217,127 +237,18 @@ public class DBpleStoryDriver {
       System.out.println("Select Character");
       
       index = s.nextInt();
-      useDB.updateCharacter(channel);
+      //useDB.updateCharacter(channel);
       
       character = useDB.selectCharacter(index);
       characterMenu(character);
    }
    
-   public static void characterInfo(String character) throws SQLException{
-      int index1;
-       System.out.println("Select menu");
-       System.out.println("1. Show equip item");
-       System.out.println("2. Show consume item");
-       System.out.println("3. Show other item");
-       index1 = s.nextInt();
-       
-       switch(index1) {
-       case 1:
-          String equip;
-          
-          equip=useDB.showEquipInventory2(character);
-          System.out.println(equip);
-          break;
-       
-       case 2: 
-          String consume;
-          consume=useDB.showConsumeInventory(character); 
-          System.out.println(consume);
-          break;
-       
-       case 3:
-          String other;
-          other = useDB.showOtherInventory(character);
-          System.out.println(other);
-          break;
-       }
-   }
-   public static void characterFriend(String character) throws SQLException{
-      int index2;
-       System.out.println("Select menu");
-       System.out.println("1. Show Friend List");
-       System.out.println("2. Add Friend");
-       index2 = s.nextInt();
-       
-       switch(index2) {
-       case 1:
-          String friend;
-          
-          friend=useDB.showFriendList(character);
-          System.out.println(friend);
-          break;
-       
-       case 2:
-       boolean friendadd;
-       String skip;
-       String friendname;
-       System.out.println("input friend name");
-       skip = s.nextLine();
-       friendname = s.nextLine();
-          useDB.addFriend(character, friendname);
-          break;
-       }
-   }
-   public static void characterParty(String character) throws SQLException{
-      int index3;
-      System.out.println("Select menu");
-      System.out.println("1. Show Party List");
-       System.out.println("2. Make Party");
-       System.out.println("3. Join Party");
-       System.out.println("4. Delete Party (leader only)");
-       System.out.println("5. Exit Party (member only)");
-       index3 = s.nextInt();
-       
-       switch(index3) {
-       case 1:
-          String partyList;
-          partyList=useDB.showPartyList();
-          System.out.println(partyList);
-          break;
-       
-       case 2:
-       useDB.addParty(character);   
-       useDB.addParty2(character);
-          break;
-       
-       case 3:
-       String skip;
-       int partyindex;
-       int membernum;
-       
-       System.out.println("input party index");
-       skip = s.nextLine();
-       partyindex = s.nextInt();
-       
-       membernum = useDB.partymemberNum(partyindex);
-       
-       if(membernum == 0)
-          useDB.updateParty1(character, partyindex);
-          if(membernum == 1)
-             useDB.updateParty2(character, partyindex);
-          
-          break;
-          
-       case 4:
-          int pindex;
-          pindex = useDB.partyindexGet(character);
-          useDB.DeleteParty(pindex);
-          
-          break;
-       case 5:
-          int ptindex;
-       
-          ptindex = useDB.partyindexGet2(character);
-          System.out.println(ptindex);
-          useDB.ExitParty(character, ptindex);
-          break;
-          
-          
-          
-       }
-   }
    public static void characterMenu(String character) throws SQLException {
       int index;
+      int monster_select;
+      int monster_behave=5;
+      int skill_index;
+      int consume_index;
       
       while(true) {
          System.out.println("Character Menu");
@@ -357,14 +268,13 @@ public class DBpleStoryDriver {
          
          switch(index) {
          case 1:
-           characterInfo(character);
-        
+            
             break;
          case 2:
-            characterFriend(character);
+            
             break;
          case 3:
-            characterParty(character);
+            
             break;
          case 4:
             
@@ -376,8 +286,39 @@ public class DBpleStoryDriver {
             
             break;
          case 7:
-            
+        	 String monster = null;
+        	 useDB.showMonsters(character);
+        	 System.out.print("What do you hunt monster?:(back:0) ");
+        	 monster_select = s.nextInt();
+        	 if(monster_select==0)
+        	 {
+        		 break;
+        	 }
+        	 System.out.print("What do you do?:(1.attack, 2.skill_attack, 3.consume, 4.run )");
+        	 monster_behave = s.nextInt();
+        	 switch(monster_behave)
+        	 {
+        	 	case 1 : useDB.AttactMonster(character,useDB.selectedMonsters(character, monster_select));
+        	 		break;
+        	 	case 2 : System.out.print("What skill do you use?:(1 or 2) ");
+        	 			 skill_index = s.nextInt();
+        	 			 System.out.println(useDB.selectedMonsters(character, monster_select));
+        	 			 useDB.skillmonster(character, useDB.selectedMonsters(character, monster_select), skill_index);
+        	 		break;
+        	 	case 3 : useDB.showconsume(character);
+        	 			 System.out.print("Which do you consume? ");
+        	 			 consume_index = s.nextInt();
+        	 			useDB.consumeitem(character, consume_index);
+        	 		break;
+        	 }
+        	 if(monster_behave==4)
+        	 {
+        		 
+        		 break;
+        	 }
+        	 
             break;
+        	 
          case 8:
             chat(character);
             break;
@@ -404,16 +345,16 @@ public class DBpleStoryDriver {
       
       switch(index) {
       case 1:
-         doChat(character);
+         //doChat(character);
          break;
       case 2:
-         showChat(character);
+        // showChat(character);
          break;
       default :
          break;
       }
    }
-   
+   /*
    public static void doChat(String character) throws SQLException {
       String content;
       String map;
@@ -488,15 +429,5 @@ public class DBpleStoryDriver {
    public static void sell(String character) throws SQLException {
       ArrayList<String> inventory = useDB.showEquipInventory(character);
    }
-   
-   
-   
+*/
 }
-
-
-
-
-
-
-
-
