@@ -623,24 +623,39 @@ public class DBpleStoryDriver {
 	}
 
 	public static void channelCharacter(int channel) throws SQLException {
-		int num;
-
-		System.out.println("1. Character Select");
-		System.out.println("2. Channel Select");
-//		System.out.println("3. Quit");
-
-		num = s.nextInt();
-
-		switch(num) {
-		case 1:
-			selectCharacter(channel);
-			break;
-		case 2:
-			selectChannel();
-			break;
-		default:
-			break;
-		}
+		int num1;
+	      int select = 0;
+	      
+	      System.out.println("1. Character Select");
+	      System.out.println("2. Channel Select");
+//	      System.out.println("3. Quit");
+	      
+	      num1 = s.nextInt();
+	      
+	      switch(num1) {
+	      case 1:
+	    	 while(true)
+	    	 {
+	    	 System.out.println("1. Select");
+	    	 System.out.println("2. make");
+	    	 select = s.nextInt();
+	    	 if(select==1)
+	    	 {
+	    		 selectCharacter(channel);
+	    		 break;
+	    	 }
+	    	 else if(select==2)
+	    	 {
+	    		 useDB.makecharacter(id, channel);
+	    	 }
+	    	 }
+	         break;
+	      case 2:
+	         selectChannel();
+	         break;
+	      default:
+	         break;
+	      }
 	}
 
 	public static void selectCharacter(int channel) throws SQLException {
@@ -1101,8 +1116,9 @@ public class DBpleStoryDriver {
 
 		ArrayList<String> info = useDB.getRank(index);
 
-		for(int i = 0; i < info.size() / 2; i++) {
+		for(int i = 0; i < info.size(); i++) {
 			System.out.println(info.get(i) + " -> " + info.get(i + 1) + "\n");
+			i++;
 		}
 
 	}
